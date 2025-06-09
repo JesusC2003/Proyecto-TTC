@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Libros</title>
+    <style>
+    /* Reset básico */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        background: linear-gradient(135deg, #e8b082b7 0%, #E3D3C1 100%);
+        min-height: 100vh;
+        color: #5C4033;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 2.8rem;
+        color: #7B4B3A;
+        margin-bottom: 40px;
+        font-weight: normal;
+        letter-spacing: 1px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #A9746E, transparent);
+    }
+
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .nav-button {
+        background: #B89B8F;
+        color: #4B2F24;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(75, 47, 36, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-button:hover {
+        background: #A9746E;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(75, 47, 36, 0.15);
+    }
+
+    .nav-button:active {
+        transform: translateY(0);
+    }
+
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        justify-items: center;
+    }
+
+    .book-card {
+        background: #FCF6F0;
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        max-width: 320px;
+        box-shadow: 0 5px 15px rgba(92, 64, 51, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #D4B7A3;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .book-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #B89B8F, #A9746E, #B89B8F);
+    }
+
+    .book-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(92, 64, 51, 0.12);
+        border-color: #A9746E;
+    }
+
+    .book-cover {
+        text-align: center;
+        margin-bottom: 18px;
+    }
+
+    .book-cover img {
+        width: 140px;
+        height: 190px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 3px 10px rgba(92, 64, 51, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .book-card:hover .book-cover img {
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px rgba(92, 64, 51, 0.2);
+    }
+
+    .book-info {
+        text-align: center;
+    }
+
+    .book-title {
+        font-size: 1.2rem;
+        color: #5C4033;
+        margin-bottom: 8px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .book-author {
+        font-size: 0.95rem;
+        color: #7B4B3A;
+        margin-bottom: 12px;
+        font-style: italic;
+        font-weight: 500;
+    }
+
+    .book-description {
+        font-size: 0.9rem;
+        color: #5C4033;
+        margin-bottom: 18px;
+        text-align: justify;
+        line-height: 1.5;
+        padding: 0 5px;
+    }
+
+    .book-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        padding-top: 12px;
+        border-top: 1px solid #E0C7B2;
+    }
+
+    .price {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #7B4B3A;
+    }
+
+    .add-to-cart {
+        background: #B89B8F;
+        color: #4B2F24;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+
+    .add-to-cart:hover {
+        background: #A9746E;
+        color: #FFF;
+        transform: scale(1.05);
+    }
+
+    .add-to-cart:active {
+        transform: scale(0.98);
+    }
+
+    .cart-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cart-content {
+        background-color: #FCF6F0;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 25px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #E0C7B2;
+    }
+
+    .cart-title {
+        font-size: 1.8rem;
+        color: #5C4033;
+    }
+
+    .close-cart {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #7B4B3A;
+        transition: color 0.3s;
+    }
+
+    .close-cart:hover {
+        color: #4B2F24;
+    }
+
+    .cart-items {
+        margin-bottom: 20px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #E0C7B2;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-title {
+        font-weight: 600;
+        color: #5C4033;
+        margin-bottom: 5px;
+    }
+
+    .item-price {
+        color: #7B4B3A;
+        font-size: 0.9rem;
+    }
+
+    .remove-item {
+        background: none;
+        border: none;
+        color: #A9746E;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+    }
+
+    .remove-item:hover {
+        color: #5C4033;
+    }
+
+    .cart-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid #E0C7B2;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #5C4033;
+    }
+
+    .cart-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .btn-continue, .btn-checkout {
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-continue {
+        background: #FCF6F0;
+        border: 1px solid #B89B8F;
+        color: #5C4033;
+    }
+
+    .btn-continue:hover {
+        background: #F3E7DD;
+    }
+
+    .btn-checkout {
+        background: #A9746E;
+        border: none;
+        color: white;
+    }
+
+    .btn-checkout:hover {
+        background: #7B4B3A;
+        transform: translateY(-2px);
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 30px 0;
+        color: #7B4B3A;
+    }
+
+    @media (max-width: 900px) {
+        .gallery {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 30px 15px;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+
+        .navigation-buttons {
+            margin-bottom: 20px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .book-card {
+            max-width: 100%;
+            padding: 18px;
+        }
+
+        .book-cover img {
+            width: 120px;
+            height: 170px;
+        }
+
+        .cart-content {
+            width: 95%;
+            padding: 15px;
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .gallery {
+            grid-template-columns: 1fr;
+        }
+
+        .navigation-buttons {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .cart-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-continue, .btn-checkout {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .title {
+            font-size: 1.8rem;
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+        }
+
+        .book-description {
+            font-size: 0.85rem;
+        }
+
+        .price {
+            font-size: 1.1rem;
+        }
+
+        .add-to-cart {
+            padding: 7px 14px;
+            font-size: 0.8rem;
+        }
+
+        .cart-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .remove-item {
+            align-self: flex-end;
+            margin-top: 5px;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Galería de Libros</h1>
+        
+        <div class="navigation-buttons">
+            <button class="nav-button" id="go-to-top">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                </svg>
+                Volver al Inicio
+            </button>
+            <button class="nav-button" id="view-cart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                Ver Carrito (0)
+            </button>
+        </div>
+        
+        <div class="gallery">
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/_Don Quixote Miguel de Cervantes bookcover_ Pullover Hoodie for Sale by MihaiCotiga.jpg" alt="El Quijote">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Don Quijote de la Mancha</h3>
+                    <p class="book-author">Miguel de Cervantes</p>
+                    <p class="book-description">La obra maestra de la literatura española que narra las aventuras del ingenioso hidalgo Don Quijote y su fiel escudero Sancho Panza.</p>
+                    <div class="book-footer">
+                        <span class="price">$25.99</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/Cien Años de Soledad _ Gabriel García Márquez.jpg" alt="Cien Años de Soledad">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Cien Años de Soledad</h3>
+                    <p class="book-author">Gabriel García Márquez</p>
+                    <p class="book-description">Una saga familiar que abarca un siglo de historia en el pueblo ficticio de Macondo, obra cumbre del realismo mágico.</p>
+                    <div class="book-footer">
+                        <span class="price">$18.50</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/40 best books to read before you die.jpg" alt="1984">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">1984</h3>
+                    <p class="book-author">George Orwell</p>
+                    <p class="book-description">Una distopía sobre un futuro totalitario donde el Gran Hermano controla cada aspecto de la vida de los ciudadanos.</p>
+                    <div class="book-footer">
+                        <span class="price">$22.00</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/Le Petit Prince.jpg" alt="El Principito">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">El Principito</h3>
+                    <p class="book-author">Antoine de Saint-Exupéry</p>
+                    <p class="book-description">Una fábula poética que cuenta la historia de un pequeño príncipe que viaja de planeta en planeta, llena de reflexiones sobre la vida.</p>
+                    <div class="book-footer">
+                        <span class="price">$15.75</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/Libro Orgullo y prejuicio_ Jane Austen.jpg" alt="Orgullo y Prejuicio">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Orgullo y Prejuicio</h3>
+                    <p class="book-author">Jane Austen</p>
+                    <p class="book-description">Una novela romántica que explora temas de amor, matrimonio y clase social en la Inglaterra del siglo XIX.</p>
+                    <div class="book-footer">
+                        <span class="price">$19.99</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/Rayuela (Julio Cortázar).jpg" alt="Rayuela">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Rayuela</h3>
+                    <p class="book-author">Julio Cortázar</p>
+                    <p class="book-description">Una novela experimental que puede leerse de múltiples formas, explorando la búsqueda existencial de sus protagonistas.</p>
+                    <div class="book-footer">
+                        <span class="price">$21.30</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/La sombra del viento.jpg" alt="La Sombra del Viento">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">La Sombra del Viento</h3>
+                    <p class="book-author">Carlos Ruiz Zafón</p>
+                    <p class="book-description">Una novela de misterio ambientada en la Barcelona de posguerra, donde un joven descubre un libro maldito que cambiará su vida.</p>
+                    <div class="book-footer">
+                        <span class="price">$23.50</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="img/Crimen y Castigo.jpg" alt="Crimen y Castigo">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Crimen y Castigo</h3>
+                    <p class="book-author">Fiódor Dostoyevski</p>
+                    <p class="book-description">La historia de Rodión Raskólnikov, un estudiante que comete un crimen y debe enfrentar las consecuencias morales de sus actos.</p>
+                    <div class="book-footer">
+                        <span class="price">$20.25</span>
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2 class="cart-title">Tu Carrito</h2>
+                <button class="close-cart" id="closeCart">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Los items del carrito se agregarán aquí dinámicamente -->
+                <div class="empty-cart">Tu carrito está vacío</div>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <div class="cart-actions">
+                <button class="btn-continue" id="continueShopping">Seguir Comprando</button>
+                <button class="btn-checkout" id="checkout">Comprar Ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let cart = [];
+        const cartButton = document.getElementById('view-cart');
+        const cartModal = document.getElementById('cartModal');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartTotalElement = document.getElementById('cartTotal');
+        const closeCartButton = document.getElementById('closeCart');
+        const continueShoppingButton = document.getElementById('continueShopping');
+        const checkoutButton = document.getElementById('checkout');
+
+        // Función para actualizar el contador del carrito
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartButton.textContent = `Ver Carrito (${totalItems})`;
+            
+            // Actualizar el icono del carrito
+            const cartIcon = document.createElement('svg');
+            cartIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            cartIcon.setAttribute('width', '16');
+            cartIcon.setAttribute('height', '16');
+            cartIcon.setAttribute('fill', 'currentColor');
+            cartIcon.setAttribute('viewBox', '0 0 16 16');
+            cartIcon.innerHTML = '<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>';
+            cartButton.prepend(cartIcon);
+        }
+
+        // Función para calcular el total del carrito
+        function calculateTotal() {
+            return cart.reduce((total, item) => {
+                const price = parseFloat(item.price.replace('$', ''));
+                return total + (price * item.quantity);
+            }, 0).toFixed(2);
+        }
+
+        // Función para renderizar los items del carrito
+        function renderCartItems() {
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<div class="empty-cart">Tu carrito está vacío</div>';
+                cartTotalElement.textContent = '$0.00';
+                checkoutButton.disabled = true;
+                return;
+            }
+
+            checkoutButton.disabled = false;
+            
+            cartItemsContainer.innerHTML = '';
+            cart.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                itemElement.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-price">${item.price} x ${item.quantity}</div>
+                    </div>
+                    <button class="remove-item" data-index="${index}">Eliminar</button>
+                `;
+                cartItemsContainer.appendChild(itemElement);
+            });
+
+            // Actualizar el total
+            cartTotalElement.textContent = `$${calculateTotal()}`;
+        }
+
+        // Función para agregar un item al carrito
+        function addToCart(title, price) {
+            const existingItem = cart.find(item => item.title === title);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    title,
+                    price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            renderCartItems();
+        }
+
+        // Función para eliminar un item del carrito
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCartItems();
+        }
+
+        // Event Listeners
+        document.getElementById('go-to-top').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Abrir el modal del carrito
+        cartButton.addEventListener('click', () => {
+            cartModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Evitar scroll en el fondo
+        });
+
+        // Cerrar el modal del carrito
+        closeCartButton.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        continueShoppingButton.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Comprar (simulado)
+        checkoutButton.addEventListener('click', () => {
+            if (cart.length > 0) {
+                alert(`¡Compra realizada por un total de $${calculateTotal()}!\nGracias por tu compra.`);
+                cart = [];
+                updateCartCount();
+                renderCartItems();
+                cartModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Eliminar items del carrito (delegación de eventos)
+        cartItemsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-item')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                removeFromCart(index);
+            }
+        });
+
+        // Agregar al carrito desde los productos
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const bookCard = e.target.closest('.book-card');
+                const bookTitle = bookCard.querySelector('.book-title').textContent;
+                const bookPrice = bookCard.querySelector('.price').textContent;
+                
+                // Efecto visual
+                this.style.transform = 'scale(0.95)';
+                this.textContent = '✓ Agregado';
+                this.style.backgroundColor = '#A38F7E';
+                this.style.color = '#fff';
+                
+                // Agregar al carrito
+                addToCart(bookTitle, bookPrice);
+                
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                    this.textContent = 'Agregar';
+                    this.style.backgroundColor = '#B8A99A';
+                    this.style.color = '#4E3E36';
+                }, 1500);
+            });
+        });
+
+        // Cerrar el modal haciendo clic fuera del contenido
+        cartModal.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Inicializar el carrito
+        updateCartCount();
+        renderCartItems();
+    </script>
+</body>
+</html>

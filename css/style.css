@@ -1910,7 +1910,7 @@ pre code {
   background-color: #fff;
   border-color: #f1dcc3;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(218, 159, 91, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(11, 11, 11, 0.25);
 }
 
 .form-control::placeholder {
@@ -9647,7 +9647,7 @@ h6,
 .page-header,
 .offer,
 .footer {
-  background: linear-gradient(rgba(51, 33, 29, 0.9), rgba(51, 33, 29, 0.9)), url(../img/bg.jpg);
+  background: linear-gradient(rgba(51, 33, 29, 0.9), rgba(51, 33, 29, 0.9)), url(../img/reserva1.jpg);
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;
